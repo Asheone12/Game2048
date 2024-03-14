@@ -11,6 +11,7 @@ import android.view.animation.RotateAnimation
 import android.view.animation.ScaleAnimation
 import android.widget.GridLayout
 import com.muen.game2048.R
+import com.muen.game2048.entity.Point
 import com.muen.game2048.rxbus.RxBus
 import com.muen.game2048.rxbus.event.AddScore
 import com.muen.game2048.rxbus.event.ClearScore
@@ -20,19 +21,22 @@ import java.util.Random
 import kotlin.math.abs
 
 
-class GameView@JvmOverloads constructor(
+class GameView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-):GridLayout(context, attrs, defStyleAttr) {
-    companion object{
-        const val CARD_COUNT = 4
+) : GridLayout(context, attrs, defStyleAttr) {
+    companion object {
+        const val CARD_COUNT = 4        //游戏界面的行数和列数，数字越高难度越小
+        const val CARD_NUMBER = 2  //生成卡片的卡面数字大小,需要是2的阶级，且>=2，数字越高难度越小
     }
+
     private val cards = Array(CARD_COUNT) {
         arrayOfNulls<Card>(
             CARD_COUNT
         )
     }
+
     init {
         initGame()
     }
@@ -61,8 +65,8 @@ class GameView@JvmOverloads constructor(
     }
 
     /**
-	 * 监听Touch事件
-	 */
+     * 监听Touch事件
+     */
     private fun setListener() {
         setOnTouchListener(object : OnTouchListener {
             private var staX = 0f
@@ -154,7 +158,7 @@ class GameView@JvmOverloads constructor(
                             flag = true
                             ind = ii + 1 //已经合过，该点不再合成
 
-                            if(cards[ii][j]?.getNumber()!! >= 2048){
+                            if (cards[ii][j]?.getNumber()!! >= 2048) {
                                 win = true
                             }
                             addScore += cards[ii][j]?.getNumber()!!
@@ -168,10 +172,10 @@ class GameView@JvmOverloads constructor(
             }
         }
 
-        if(addScore != 0){
+        if (addScore != 0) {
             RxBus.get().post(AddScore(addScore))
         }
-        if(win){
+        if (win) {
             RxBus.get().post(Win())
         }
         return flag
@@ -201,7 +205,7 @@ class GameView@JvmOverloads constructor(
                             flag = true
                             ind = ii
 
-                            if(cards[ii][j]?.getNumber()!! >= 2048){
+                            if (cards[ii][j]?.getNumber()!! >= 2048) {
                                 win = true
                             }
                             addScore += cards[ii][j]?.getNumber()!!
@@ -214,10 +218,10 @@ class GameView@JvmOverloads constructor(
             }
         }
 
-        if(addScore != 0){
+        if (addScore != 0) {
             RxBus.get().post(AddScore(addScore))
         }
-        if(win){
+        if (win) {
             RxBus.get().post(Win())
         }
         return flag
@@ -247,7 +251,7 @@ class GameView@JvmOverloads constructor(
                             flag = true
                             ind = jj + 1
 
-                            if(cards[i][jj]?.getNumber()!! >= 2048){
+                            if (cards[i][jj]?.getNumber()!! >= 2048) {
                                 win = true
                             }
                             addScore += cards[i][jj]?.getNumber()!!
@@ -260,10 +264,10 @@ class GameView@JvmOverloads constructor(
             }
         }
 
-        if(addScore != 0 ){
+        if (addScore != 0) {
             RxBus.get().post(AddScore(addScore))
         }
-        if(win){
+        if (win) {
             RxBus.get().post(Win())
         }
         return flag
@@ -278,7 +282,7 @@ class GameView@JvmOverloads constructor(
         var win = false
         for (i in 0 until CARD_COUNT) {
             var ind = CARD_COUNT
-            var j = CARD_COUNT -2
+            var j = CARD_COUNT - 2
             while (j >= 0) {
                 if (cards[i][j]?.getNumber() != 0) {
                     for (jj in j + 1 until ind) {
@@ -293,7 +297,7 @@ class GameView@JvmOverloads constructor(
                             flag = true
                             ind = jj
 
-                            if(cards[i][jj]?.getNumber()!! >= 2048){
+                            if (cards[i][jj]?.getNumber()!! >= 2048) {
                                 win = true
                             }
                             addScore += cards[i][jj]?.getNumber()!!
@@ -305,10 +309,10 @@ class GameView@JvmOverloads constructor(
                 --j
             }
         }
-        if(addScore != 0){
+        if (addScore != 0) {
             RxBus.get().post(AddScore(addScore))
         }
-        if(win){
+        if (win) {
             RxBus.get().post(Win())
         }
         return flag
@@ -323,9 +327,9 @@ class GameView@JvmOverloads constructor(
             for (j in 0 until CARD_COUNT) {
                 if (cards[i][j]?.getNumber() == 0) {
                     return true
-                } else if (i != CARD_COUNT-1 && cards[i][j]?.getNumber() == cards[i + 1][j]?.getNumber()) {
+                } else if (i != CARD_COUNT - 1 && cards[i][j]?.getNumber() == cards[i + 1][j]?.getNumber()) {
                     return true
-                } else if (j != CARD_COUNT-1 && cards[i][j]?.getNumber() === cards[i][j + 1]?.getNumber()) {
+                } else if (j != CARD_COUNT - 1 && cards[i][j]?.getNumber() === cards[i][j + 1]?.getNumber()) {
                     return true
                 }
             }
@@ -356,11 +360,12 @@ class GameView@JvmOverloads constructor(
     }
 
     /**
-	 * 递归随机，玄学复杂度，期望递归次数小于 16 次，偷了个懒
-	 * 最好是把可用方块加入到一个列表中，然后在列表中随机
-	 * cnt是随机次数
-	 */
-    private fun randomCreateCard(cnt: Int) {
+     * 递归随机，玄学复杂度，期望递归次数小于 16 次，偷了个懒
+     * 最好是把可用方块加入到一个列表中，然后在列表中随机
+     * cnt是随机次数
+     * 注:该方法已弃用
+     */
+    private fun randomRecursion(cnt: Int) {
         val random = Random()
         val r: Int = random.nextInt(CARD_COUNT)
         val c: Int = random.nextInt(CARD_COUNT)
@@ -371,8 +376,7 @@ class GameView@JvmOverloads constructor(
             return
         }
         var rand: Int = random.nextInt(10)
-        rand = if (rand >= 2) 2 else 4
-        //rand = if (rand >= 2) 512 else 1024       //作弊模式
+        rand = if (rand >= 2) CARD_NUMBER else CARD_NUMBER * 2
         cards[r][c]?.setNumber(rand)
 
         //播放创建动画
@@ -383,8 +387,47 @@ class GameView@JvmOverloads constructor(
     }
 
     /**
-	 * 播放创建新方块动画
-	 */
+     * 从剩余的空卡片列表中随机一个位置创建卡片
+     * cnt是随机次数
+     */
+    private fun randomCreateCard(cnt: Int) {
+        val random = Random()
+        //在空卡片列表中随机选择一个位置
+        val emptyCards = getEmptyCards()
+        val point = emptyCards[random.nextInt(emptyCards.size)]
+        val row = point.row
+        val colum = point.column
+
+        //随机生成卡片上的数字
+        var rand: Int = random.nextInt(10)
+        rand = if (rand >= 2) CARD_NUMBER else CARD_NUMBER * 2
+        cards[row][colum]?.setNumber(rand)
+
+        //播放创建动画
+        playCreateAnimation(row, colum)
+        if (cnt >= 2) {
+            randomCreateCard(cnt - 1)
+        }
+    }
+
+    /**
+     * 获取当前空卡片的列表
+     */
+    private fun getEmptyCards(): List<Point> {
+        val emptyCards = arrayListOf<Point>()
+        for (i in 0 until CARD_COUNT) {
+            for (j in 0 until CARD_COUNT) {
+                if (cards[i][j]?.getNumber() == 0) {
+                    emptyCards.add(Point(i, j))
+                }
+            }
+        }
+        return emptyCards
+    }
+
+    /**
+     * 播放创建新方块动画
+     */
     private fun playCreateAnimation(r: Int, c: Int) {
         val animationSet = AnimationSet(true)
 
@@ -415,8 +458,8 @@ class GameView@JvmOverloads constructor(
     }
 
     /**
-	 * 播放合并动画
-	 */
+     * 播放合并动画
+     */
     private fun playMergeAnimation(r: Int, c: Int) {
         val anim = ScaleAnimation(
             1f, 1.2f, 1f, 1.2f,
