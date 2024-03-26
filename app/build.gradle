@@ -4,6 +4,14 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        debug {
+            keyAlias 'key0'
+            storePassword '123456'
+            keyPassword '123456'
+            storeFile file("${rootDir.path}/signature.jks")
+        }
+    }
     namespace 'com.muen.game2048'
     compileSdk 33
 
@@ -11,8 +19,8 @@ android {
         applicationId "com.muen.game2048"
         minSdk 27
         targetSdk 33
-        versionCode 1
-        versionName "1.0"
+        versionCode 10000
+        versionName "1.0.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -34,6 +42,13 @@ android {
     buildFeatures{
         viewBinding true
         buildConfig true
+    }
+
+    android.applicationVariants.all { variant ->
+        variant.outputs.all {
+            def date = new Date().format("yyyyMMddHHmm")
+            outputFileName = "Game2048_${variant.name}_v${variant.versionName}_${date}.apk"
+        }
     }
 }
 
