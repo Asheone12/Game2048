@@ -28,7 +28,7 @@ class GameView @JvmOverloads constructor(
 ) : GridLayout(context, attrs, defStyleAttr) {
     companion object {
         const val CARD_COUNT = 4        //游戏界面的行数和列数，数字越高难度越小
-        const val CARD_NUMBER = 2  //生成卡片的卡面数字大小,需要是2的阶级，且>=2，数字越高难度越小
+        const val CARD_NUMBER = 2  //生成卡片的卡面数字大小,需要是2的阶级，且>=2，数字越高难度越小，作弊模式
     }
 
     private val cards = Array(CARD_COUNT) {
