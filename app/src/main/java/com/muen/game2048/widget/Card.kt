@@ -63,13 +63,13 @@ class Card @JvmOverloads constructor(
 
     private fun changeSize(num: Int) {
         if (num >= 1024) {
-            textView.textSize = 25f
+            textView.textSize = 20f
         } else if (num >= 128) {
-            textView.textSize = 35f
+            textView.textSize = 25f
         } else if (num >= 16) {
-            textView.textSize = 42f
+            textView.textSize = 35f
         } else {
-            textView.textSize = 50f
+            textView.textSize = 40f
         }
     }
 
