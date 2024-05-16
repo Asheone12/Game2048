@@ -2,6 +2,7 @@ package com.muen.game2048.widget
 
 import android.content.Context
 import android.util.AttributeSet
+import android.util.TypedValue
 import android.view.Gravity
 import android.widget.FrameLayout
 import android.widget.TextView
@@ -63,13 +64,13 @@ class Card @JvmOverloads constructor(
 
     private fun changeSize(num: Int) {
         if (num >= 1024) {
-            textView.textSize = 20f
+            textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP,15f)
         } else if (num >= 128) {
-            textView.textSize = 25f
+            textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP,20f)
         } else if (num >= 16) {
-            textView.textSize = 35f
+            textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP,30f)
         } else {
-            textView.textSize = 40f
+            textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP,35f)
         }
     }
 
